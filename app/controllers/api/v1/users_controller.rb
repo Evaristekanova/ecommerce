@@ -3,26 +3,38 @@ class Api::V1::UsersController < ApplicationController
 
     def index
         @users = User.all
-        render json: @users
+        render json: {status: "success", data: @users}, status: :ok
     end
 
 
     def show
-        render json: @user
+        render json: {status: "success", data: @user}, status: :ok
     end
 
-    
+
     def create
         @user = User.new(user_params)
         if @user.save
-            render json: @user, status: :created
+            render json: {status: "success", data: @user}, status: :created
         else
             render json: {error: @user.errors.full_messages}, status: :unprocessable_entity
         end
     end
 
+    def update
+        if @user.update(user_params)
+            render json: {status: "success", data: @user}, status: :ok
+        else
+            render json: {error: @user.errors.full_messages}, status: :unprocessable_entity
+        end
+    end
+
+    def destroy
+        @user.destroy
+        render json: {status: "success", data: @user}, status: :ok
 
     private
+    
     def user_params
         params.permit(:email, :password)
     end
@@ -30,6 +42,6 @@ class Api::V1::UsersController < ApplicationController
     def set_user
         @user = User.find(params[:id])
     rescue
-        render json: {error: "User not found"}, status: :not_found
+        render json: {message: "User not found"}, status: :not_found
     end
 end
