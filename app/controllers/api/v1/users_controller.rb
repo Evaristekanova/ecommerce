@@ -1,5 +1,6 @@
 class Api::V1::UsersController < ApplicationController
     before_action :set_user, only: [:show, :update, :destroy]
+    before_action :check_own, only: [:update, :destroy]
 
     def index
         @users = User.all
@@ -43,5 +44,9 @@ class Api::V1::UsersController < ApplicationController
         @user = User.find(params[:id])
     rescue
         render json: {message: "User not found"}, status: :not_found
+    end
+
+    def check_own
+        render json: {message: "You are not authorized to perform this action"}, status: :unauthorized unless @user.id == current_user.id
     end
 end
