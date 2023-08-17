@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     namespace :v1, path: '/' do
       resources :users
       resources :products
+      resources :orders
     end
   end
 

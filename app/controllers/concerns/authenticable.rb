@@ -14,6 +14,10 @@ module Authenticable
 
     protected
     def check_login
+        if self.current_user
+            return
+        else
         render json: {error: "you are not authorized to perform this action"}, status: :unauthorized unless self.current_user
+        end
     end
 end
