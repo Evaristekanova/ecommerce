@@ -5,28 +5,28 @@ class Api::V1::ProductsController < ApplicationController
 
     def index
         @products = Product.all
-        render json: {status: 'seccess', message: 'loaded products', data: @products}, status: :ok
+        render json: ProductSirializer.new(@products).serializable_hash, status: :ok
     end
 
     def show
         @product = Product.find(params[:id])
-        render json: {status: 'seccess', message: 'loaded product', data: @product}, status: :ok
+        render json: ProductSirializer.new(@product).serializable_hash, status: :ok
     end
 
     def create
         @product = current_user.products.build(product_params)
         if @product.save
-            render json: {status: 'seccess', message: 'created product', data: @product}, status: :created
+            render json: ProductSirializer.new(@product).serializable_hash, status: :created
         else
-            render json: {status: 'error', message: 'product not created', data: @product.errors}, status: :unprocessable_entity
+            render json: {error: @product.errors.full_messages}, status: :unprocessable_entity
         end
     end
 
     def update
         if @product.update(product_params)
-            render json: {status: 'seccess', message: 'updated product', data: @product}, status: :ok
+            render json: ProductSirializer.new(@product).serializable_hash, status: :ok
         else
-            render json: {status: 'error', message: 'product not updated', data: @product.errors}, status: :unprocessable_entity
+            render json: {error: @product.errors.full_messages}, status: :unprocessable_entity
         end
     end
 
