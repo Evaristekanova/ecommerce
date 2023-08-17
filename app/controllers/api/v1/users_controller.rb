@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
     before_action :set_user, only: [:show, :update, :destroy]
-    before_action :check_own, only: [:update, :destroy]
+    before_action :check_owner, only: [:update, :destroy]
 
     def index
         @users = User.all
@@ -33,6 +33,7 @@ class Api::V1::UsersController < ApplicationController
     def destroy
         @user.destroy
         render json: {status: "success", data: @user}, status: :ok
+    end
 
     private
     
@@ -46,7 +47,7 @@ class Api::V1::UsersController < ApplicationController
         render json: {message: "User not found"}, status: :not_found
     end
 
-    def check_own
+    def check_owner
         render json: {message: "You are not authorized to perform this action"}, status: :unauthorized unless @user.id == current_user.id
     end
 end
