@@ -1,8 +1,11 @@
 class Api::V1::OrdersController < ApplicationController
+    include Paginable
     before_action :check_login
 
     def index
-        render json: OrderSerializer.new(current_user.orders).serializable_hash, status: :ok
+        orders = current_user.orders.page(current_page).per(per_page)
+        options = get_links_serializer_params('api_v1_orders_path', orders)
+        render json: OrderSerializer.new(current_user.orders, options).serializable_hash, status: :ok
     end
 
     def create
@@ -33,6 +36,7 @@ class Api::V1::OrdersController < ApplicationController
         else
             render json: { errors: order.errors }, status: :unprocessable_entity
         end
+    end
 
     private
 
