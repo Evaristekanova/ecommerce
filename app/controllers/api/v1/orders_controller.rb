@@ -5,6 +5,16 @@ class Api::V1::OrdersController < ApplicationController
         render json: OrderSerializer.new(current_user.orders).serializable_hash, status: :ok
     end
 
+    def create
+        order = current_user.orders.build(order_params)
+        if order.save
+            OrderMailer.send_confirmation(order).deliver
+            render json: OrderSerializer.new(order).serializable_hash, status: :created
+        else
+            render json: { errors: order.errors }, status: :unprocessable_entity
+        end
+    end
+
     def show
         order = current_user.orders.find(params[:id])
         options = {include: [:products]}
