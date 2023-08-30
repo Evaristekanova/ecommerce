@@ -1,11 +1,12 @@
 class Api::V1::ProductsController < ApplicationController
+    include Paginable
     before_action :check_login, only: [:create]
     before_action :set_product, only: [:show, :update, :destroy]
     before_action :check_owner, only: [:update, :destroy]
 
     def index
-        @products = Product.all
-        options ={include: [:user]}
+        @products = Product.page(current_page).per(per_page).search(params)
+        options = get_links_serializer_params('api_v1_products_path', @products)
         render json: ProductSerializer.new(@products, options).serializable_hash, status: :ok
     end
 
