@@ -1,5 +1,5 @@
 class OrderMailer < ApplicationMailer
-  default from: "ecommerce@gmial.com"
+  default from: "ecommerce@gmail.com"
   def send_confirmation(order)
     @order= order
     @user = @order.user
